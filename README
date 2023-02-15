@@ -1,0 +1,129 @@
+DIACONU ARINA-IOANA     322CB
+
+            README
+     Tema 3 - Client Web
+
+    Cerinte implementate:
+        - register - 10p
+        - login - 10p
+        - enter_library - 10p
+        - get_books - 20p
+        - get_book - 10p
+        - add_book - 20p
+        - delete_book - 10p
+        - logout - 5p
+        - exit - 5p
+    Total: 100p
+
+    Mentiune importanta:
+        - scheletul temei este cel al solutiei laboratorului 10,
+publicata pe ocw.
+
+        Functiile din "requests.c":
+
+    Functia "compute_get_request":
+        - aceasta functie este adaptata dupa cea din scheletul
+laboratorului. Aceasta primeste doar host-ul, url-ul, cookie-ul,
+care este doar unul pentru cazul din tema si payload-ul si
+intoarce mesajul computat.
+
+    Functia "compute_post_request":
+        - adaptata, de asemenea dupa cea din schelet. Pe langa
+host, url si tipul de continut, mai primeste si payload-ul si
+token-ul jwt si intoarce mesajul computat.
+
+    Functia "compute_delete_request":
+        - aceasta functie este construita dupa modelul celei
+ce computeaza un mesaj de tip GET. Primeste host-ul, url-ul
+si token-ul jwt si intoarce mesajul computat.
+
+        Functiile din "client.c":
+
+    Functia main:
+        - in aceasta functie se primesc comenzi de la tastatura
+in continuu pana la primirea comenzii "exit", moment in care se
+opreste executia programului. In functie de comenzile primite
+de la tastatura, sunt apelate functii ce construiesc mesaje
+pentru a putea interactiona cu serverul. In cazul in care se
+introduce o comanda ce nu se gaseste in lista de comenzi
+mentionata mai sus, se va afisa un mesaj de eroare pentru ca
+utilizatorul sa stie ca nu a introdus o comanda valida. O
+comanda valida nu contine spatii, semne de punctuatie sau enter.
+
+    Functia "compute_register_request":
+        - aceasta functie asteapta de la tastatura un username
+si o parola pentru a putea construi mesajul trimis catre server.
+Atat username-ul, cat si parola trebuie sa fie stringuri fara
+spatii si am ales sa le citesc de la tastatura folosind functia
+scanf, ce ignora enter-urile la inceput sau spatiile dintre
+cuvinte. Pentru a crea un obiect json, folosesc biblioteca
+recomandata in enuntul temei, "parson", respectiv functiile
+"json_value_init_object", "json_value_get_object" si functia
+"json_serialize_to_string_pretty" pentru a converti obiectul
+json la string. Formez mesajul ce trebuie trimis catre server
+cu functia "compute_post_request". Dupa ce trimit mesajul catre
+server si primesc raspunsul, interpretez, daca este cazul, 
+eroarea si afisez un mesaj de eroare, iar in caz contrar,
+afisez un mesaj ca inregistrarea s-a efectuat cu succes.
+
+    Functia "compute_login_request":
+        - aceasta functie primeste de la tastatura, precum in
+cazul precedent, un username si o parola, formeaza un obiect
+json, il converteste la string, trimite mesajul computat catre
+server, primeste raspunsul, interpreteaza eroarea si afiseaza
+un mesaj de eroare daca este cazul. Daca login-ul s-a efectuat
+cu succes, se extrage cookie-ul din raspunsul server-ului si
+acesta este intors de functie.
+
+    Functia "compute_enter_library_request":
+        - aceasta functie primeste cookie-ul returnat in urma
+unui login si computeaza mesajul cu acest cookie, il trimite
+catre server, primeste raspunsul si intoarce un token jwt in
+cazul in care cererea a avut succes sau NULL in caz contrar.
+
+    Functia "extract_payload":
+        - aceasta functie primeste un raspuns de la server si
+intoarce payload-ul acelui raspuns sub forma de string.
+
+    Functia "compute_get_books_request":
+        - aceasta functie apeleaza functia "compute_get_request"
+si trimite mesajul la server. Dupa ce primeste raspunsul,
+utilizeaza functia explicata anterior pentru a extrage lista
+de carti din raspunsul server-ului pe care o si afiseaza.
+
+    Functiile "verify_number" si "verify_number_without_last":
+        - aceste functii primesc un string si intorc 1 daca acel
+string reprezinta un numar si 0 daca nu sunt numai cifre. Cea
+de-a doua functie nu tine cont de ultimul caracter (ce in cazul)
+acesta este '\n'.
+
+    Functia "compute_get_book_request":
+        - acesta functie primeste de la tastatura un id de 
+carte. In cazul in care este valid acest id, repeta procedeul
+de computare al mesajul de trimis catre server si interpreteaza
+raspunsul primit. In caz de eroare, afiseaza mesajul 
+corespunzator, iar in caz de succes, extrage payload-ul si
+afiseaza cartea ceruta. In cazul in care id-ul nu este valid,
+adica daca contine orice alt caracter in afara de cifre, se va
+afisa, din nou, un mesaj de eroare.
+
+    Functia "compute_add_book_request":
+        - aceasta functie trebuie sa primeasca de la tastatura
+un titlu de carte, un autor, genul cartii, editura si numarul
+de pagini. Pentru primele 4, se pot citi string-uri ce contin
+atat spatii cat si orice tip de caractere, asa ca am ales sa
+citesc aceste string-uri cu functia "fgets". Dupa ce verific
+daca ultimul string este un numar, formez obiectul json, 
+computez mesajul, il trimit catre server si interpretez, ca
+si in cazurile anterioare, raspunsul primit.
+
+    Functia "compute_delete_book_request":
+        - aceasta functie primeste un id de la tastatura si,
+precum in cazul functiei "compute_get_book_request", computeaza
+mesajul, il trimite catre server, primeste raspunsul si il
+interpreteaza.
+
+    Functia "compute_logout_request":
+        - computeaza mesajul de trimis catre server cu acel
+cookie primit la login, il trimite la server, primeste raspunsul
+si il interpreteaza.
